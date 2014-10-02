@@ -5,7 +5,7 @@ My personal collection of tools for shipping & maintaining web applications.
 
 ## Applications
 
-- My personal website &mdash; [stevenschobert.com](http://stevenschobert.com)
+- [stevenschobert.com](http://stevenschobert.com)
 
 ## Hosting
 

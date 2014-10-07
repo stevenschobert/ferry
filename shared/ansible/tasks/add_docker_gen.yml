@@ -1,0 +1,6 @@
+---
+- name: ensure docker-gen is downloaded
+  command: wget https://github.com/jwilder/docker-gen/releases/download/0.3.3/docker-gen-linux-amd64-0.3.3.tar.gz creates=/root/docker-gen-linux-amd64-0.3.3.tar.gz
+
+- name: unpackage docker-gen
+  unarchive: src=/root/docker-gen-linux-amd64-0.3.3.tar.gz dest=/usr/local/bin copy=no

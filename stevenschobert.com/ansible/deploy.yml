@@ -1,0 +1,25 @@
+---
+- hosts: endor
+  remote_user: root
+
+  tasks:
+    - include: ../../shared/ansible/tasks/upgrade_packages.yml
+    - include: ../../shared/ansible/tasks/add_nginx.yml
+    - include: ../../shared/ansible/tasks/add_docker_gen.yml
+
+    - name: ensure the nginx ssl directory exists
+      command: mkdir /etc/nginx/ssl creates=/etc/nginx/ssl
+
+    - name: copy ssl certificates (1/2)
+      copy: src=./files/server.crt dest=/etc/nginx/ssl/server.crt force=no
+
+    - name: copy ssl certificates (2/2)
+      copy: src=./files/server.key dest=/etc/nginx/ssl/server.key force=no
+
+    - name: remove default nginx site
+      command: rm -rf /etc/nginx/sites-enabled/default removes=/etc/nginx/sites-enabled/default
+      notify:
+      - restart nginx
+
+  handlers:
+    - include: ../../shared/ansible/handlers/restart_nginx.yml

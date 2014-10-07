@@ -1,0 +1,7 @@
+#!/bin/sh
+
+path=$1
+IP=$(terraform show $path | awk '/ipv4/ { split($0,a," = "); print a[2]}')
+name=$(terraform show $path | awk '/name/ { split($0,a," = "); print a[2]}')
+
+echo "$name ansible_ssh_host=$IP"

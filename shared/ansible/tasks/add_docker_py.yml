@@ -1,0 +1,9 @@
+---
+- name: ensure pip is available
+  apt: name=python-pip state=present
+
+- name: ensure virtualenv is available
+  apt: name=python-virtualenv state=present
+
+- name: ensure docker-py is installed
+  pip: name=docker-py version=0.4.0

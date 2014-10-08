@@ -2,24 +2,63 @@
 - hosts: endor
   remote_user: root
 
+
   tasks:
+    # Dependencies
     - include: ../../shared/ansible/tasks/upgrade_packages.yml
     - include: ../../shared/ansible/tasks/add_nginx.yml
     - include: ../../shared/ansible/tasks/add_docker_gen.yml
+    - include: ../../shared/ansible/tasks/add_docker_py.yml
 
+
+    # Configure Nginx
     - name: ensure the nginx ssl directory exists
       command: mkdir /etc/nginx/ssl creates=/etc/nginx/ssl
-
-    - name: copy ssl certificates (1/2)
-      copy: src=./files/server.crt dest=/etc/nginx/ssl/server.crt force=no
-
-    - name: copy ssl certificates (2/2)
-      copy: src=./files/server.key dest=/etc/nginx/ssl/server.key force=no
 
     - name: remove default nginx site
       command: rm -rf /etc/nginx/sites-enabled/default removes=/etc/nginx/sites-enabled/default
       notify:
       - restart nginx
 
+    - name: copy docker-gen nginx template
+      copy: src=./files/docker_nginx.tmpl dest=/etc/nginx/docker_nginx.tmpl
+
+    - name: add the docker-gen service
+      copy: src=./files/dockergen_service dest=/etc/init.d/dockergen mode=0751
+      notify:
+      - restart dockergen
+
+    - name: copy ssl certificates (1/2)
+      copy: src=./files/server.crt dest=/etc/nginx/ssl/server.crt mode=600 force=no
+
+    - name: copy ssl certificates (2/2)
+      copy: src=./files/server.key dest=/etc/nginx/ssl/server.key mode=600 force=no
+
+
+    # Setup SSH
+    - name: ensure the ssh directory exists
+      command: mkdir ~/.ssh creates=~/.ssh
+
+    - name: copy the ssh keys (1/2)
+      copy: src=./files/id_rsa dest=~/.ssh/id_rsa mode=600 force=no
+
+    - name: copy the ssh keys (2/2)
+      copy: src=./files/id_rsa.pub dest=~/.ssh/id_rsa.pub mode=644 force=no
+
+
+    # Build source code and images
+    - name: copy source code
+      git: repo=git@github.com:stevenschobert/blog.git dest=~/blog accept_hostkey=yes
+
+    - name: pull source code submodules
+      command: git submodule update --init
+      args:
+        chdir: ~/blog
+
+    - name: build docker docker image
+      docker_image: path=/root/blog name="blog" state=present
+
   handlers:
     - include: ../../shared/ansible/handlers/restart_nginx.yml
+    - name: restart dockergen
+      service: name=dockergen state=restarted

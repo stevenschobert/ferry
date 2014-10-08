@@ -15,9 +15,16 @@ cp terraform/terraform.tfvars.sample terraform/terraform.tfvars
 
 Copy the SSL server keys to the `ansible/files` folder:
 
-```
+```sh
 cp server.crt ./ansible/files/server.crt
 cp server.key ./ansible/files/server.key
+```
+
+Copy the SSH keys to the `ansible/files` folder:
+
+```sh
+cp id_rsa ./ansible/files/id_rsa
+cp id_rsa.pub ./ansible/files/id_rsa.pub
 ```
 
 ## Tasks

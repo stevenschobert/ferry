@@ -60,5 +60,4 @@
 
   handlers:
     - include: ../../shared/ansible/handlers/restart_nginx.yml
-    - name: restart dockergen
-      service: name=dockergen state=restarted
+    - include: ../../shared/ansible/handlers/restart_dockergen.yml

@@ -9,6 +9,7 @@
     - include: ../../shared/ansible/tasks/add_nginx.yml
     - include: ../../shared/ansible/tasks/add_docker_gen.yml
     - include: ../../shared/ansible/tasks/add_docker_py.yml
+    - include: ../../shared/ansible/tasks/add_dockergen_service.yml
 
 
     # Configure Nginx
@@ -22,9 +23,6 @@
 
     - name: copy docker-gen nginx template
       copy: src=./files/docker_nginx.tmpl dest=/etc/nginx/docker_nginx.tmpl
-
-    - name: add the docker-gen service
-      copy: src=./files/dockergen_service dest=/etc/init.d/dockergen mode=0751
       notify:
       - restart dockergen
 
@@ -57,6 +55,7 @@
 
     - name: build docker docker image
       docker_image: path=/root/blog name="blog" state=present
+
 
   handlers:
     - include: ../../shared/ansible/handlers/restart_nginx.yml

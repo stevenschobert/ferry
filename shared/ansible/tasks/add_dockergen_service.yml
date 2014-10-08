@@ -1,0 +1,3 @@
+---
+- name: add the docker-gen service
+  copy: src=../files/dockergen_service dest=/etc/init.d/dockergen mode=0751

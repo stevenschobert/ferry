@@ -16,6 +16,11 @@
     - name: ensure the nginx ssl directory exists
       command: mkdir /etc/nginx/ssl creates=/etc/nginx/ssl
 
+    - name: copy the nginx config
+      copy: src=./files/nginx.conf dest=/etc/nginx/nginx.conf
+      notify:
+      - restart nginx
+
     - name: remove default nginx site
       command: rm -rf /etc/nginx/sites-enabled/default removes=/etc/nginx/sites-enabled/default
       notify:

@@ -1,0 +1,10 @@
+---
+- hosts: endor
+  remote_user: root
+
+  tasks:
+    - include: ../../shared/ansible/tasks/upgrade_packages.yml
+    - include: ../../shared/ansible/tasks/add_nginx.yml
+    - include: ../../shared/ansible/tasks/add_docker_gen.yml
+    - include: ../../shared/ansible/tasks/add_docker_py.yml
+    - include: ../../shared/ansible/tasks/add_dockergen_service.yml

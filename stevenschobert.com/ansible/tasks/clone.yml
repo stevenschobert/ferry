@@ -1,0 +1,8 @@
+---
+- name: copy source code
+  git: repo=git@github.com:stevenschobert/blog.git dest=~/blog accept_hostkey=yes
+
+- name: pull source code submodules
+  command: git submodule update --init
+  args:
+    chdir: ~/blog

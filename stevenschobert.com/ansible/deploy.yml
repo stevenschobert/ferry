@@ -2,66 +2,29 @@
 - hosts: endor
   remote_user: root
 
+  vars_files:
+    - ./variables.yml
 
   tasks:
-    # Dependencies
-    - include: ../../shared/ansible/tasks/upgrade_packages.yml
-    - include: ../../shared/ansible/tasks/add_nginx.yml
-    - include: ../../shared/ansible/tasks/add_docker_gen.yml
-    - include: ../../shared/ansible/tasks/add_docker_py.yml
-    - include: ../../shared/ansible/tasks/add_dockergen_service.yml
+    - name: ensure nginx is running
+      service: name=nginx state=started
 
+    - include: ./tasks/clone.yml
 
-    # Configure Nginx
-    - name: ensure the nginx ssl directory exists
-      command: mkdir /etc/nginx/ssl creates=/etc/nginx/ssl
+    - name: remove old container
+      docker: image=blog name=blog_consumer_1 state=absent
 
-    - name: copy the nginx config
-      copy: src=./files/nginx.conf dest=/etc/nginx/nginx.conf
-      notify:
-      - restart nginx
+    - name: remove old docker image
+      docker_image: path=/root/blog name="blog" state=absent
 
-    - name: remove default nginx site
-      command: rm -rf /etc/nginx/sites-enabled/default removes=/etc/nginx/sites-enabled/default
-      notify:
-      - restart nginx
+    - name: build new docker image
+      docker_image: path=/root/blog name="blog" state=present
 
-    - name: copy docker-gen nginx template
-      copy: src=./files/docker_nginx.tmpl dest=/etc/nginx/docker_nginx.tmpl
+    - name: start new container
+      docker: "image=blog name=blog_consumer_1 state=running ports=3100:3000 env=VIRTUAL_HOST=new.stevenschobert.com,NODE_ENV=production,GAUGES_KEY={{ gauges_key }},COUCH_URL={{ couch_url }},COUCH_PORT={{ couch_port }},COUCH_DB={{ couch_db }},COUCH_USER={{ couch_user }},COUCH_PASS={{ couch_password }}"
       notify:
       - restart dockergen
 
-    - name: copy ssl certificates (1/2)
-      copy: src=./files/server.crt dest=/etc/nginx/ssl/server.crt mode=600 force=no
-
-    - name: copy ssl certificates (2/2)
-      copy: src=./files/server.key dest=/etc/nginx/ssl/server.key mode=600 force=no
-
-
-    # Setup SSH
-    - name: ensure the ssh directory exists
-      command: mkdir ~/.ssh creates=~/.ssh
-
-    - name: copy the ssh keys (1/2)
-      copy: src=./files/id_rsa dest=~/.ssh/id_rsa mode=600 force=no
-
-    - name: copy the ssh keys (2/2)
-      copy: src=./files/id_rsa.pub dest=~/.ssh/id_rsa.pub mode=644 force=no
-
-
-    # Build source code and images
-    - name: copy source code
-      git: repo=git@github.com:stevenschobert/blog.git dest=~/blog accept_hostkey=yes
-
-    - name: pull source code submodules
-      command: git submodule update --init
-      args:
-        chdir: ~/blog
-
-    - name: build docker docker image
-      docker_image: path=/root/blog name="blog" state=present
-
-
   handlers:
-    - include: ../../shared/ansible/handlers/restart_nginx.yml
-    - include: ../../shared/ansible/handlers/restart_dockergen.yml
+    - name: restart dockergen
+      service: name=dockergen state=restarted

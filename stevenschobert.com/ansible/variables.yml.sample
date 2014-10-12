@@ -1,0 +1,7 @@
+---
+couch_url: "http://xxxxx"
+couch_port: 5984
+couch_user: ""
+couch_password: ""
+couch_db: ""
+gauges_key: ""

@@ -1,7 +1,7 @@
 server {
     listen 80;
     server_name  ~^(www\.)?(?<domain>new|endor)?.?stevenschobert.com$;
-    return 301 https://$domain.stevenschobert.com;
+    return 301 https://$domain.stevenschobert.com$request_uri;
 }
 
 {{ range $host, $containers := groupBy $ "Env.VIRTUAL_HOST" }}

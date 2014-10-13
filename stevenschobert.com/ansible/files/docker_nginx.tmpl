@@ -1,6 +1,6 @@
 server {
     listen 80;
-    server_name  ~^(www\.)?(?<domain>new|endor)?.?stevenschobert.com$;
+    server_name  ~^(www\.)?(?<domain>new|editor)?.?stevenschobert.com$;
     return 301 https://$domain.stevenschobert.com$request_uri;
 }
 
@@ -13,7 +13,7 @@ upstream {{ $host }} {
 {{ end }}
 }
 
-{{ if eq $host "stevenschobert.com" "endor.stevenschobert.com" "new.stevenschobert.com" }}
+{{ if eq $host "stevenschobert.com" "editor.stevenschobert.com" "new.stevenschobert.com" }}
 server {
     listen 443;
 

@@ -11,8 +11,11 @@
 
     - include: ./tasks/clone.yml
 
-    - name: remove old container
-      docker: image=blog name=blog_consumer_1 state=absent
+    - name: remove old consumer container
+      docker: image=blog name=blog_consumer state=absent
+
+    - name: remove old admin container
+      docker: image=blog name=blog_admin state=absent
 
     - name: remove old docker image
       docker_image: path=/root/blog name="blog" state=absent
@@ -20,8 +23,13 @@
     - name: build new docker image
       docker_image: path=/root/blog name="blog" state=present
 
-    - name: start new container
-      docker: "image=blog name=blog_consumer_1 state=running ports=3100:3000 env=VIRTUAL_HOST=new.stevenschobert.com,NODE_ENV=production,GAUGES_KEY={{ gauges_key }},COUCH_URL={{ couch_url }},COUCH_PORT={{ couch_port }},COUCH_DB={{ couch_db }},COUCH_USER={{ couch_user }},COUCH_PASS={{ couch_password }}"
+    - name: start new consumer container
+      docker: "image=blog name=blog_consumer state=running ports=3100:3000 env=VIRTUAL_HOST=new.stevenschobert.com,NODE_ENV=production,GAUGES_KEY={{ gauges_key }},COUCH_URL={{ couch_url }},COUCH_PORT={{ couch_port }},COUCH_DB={{ couch_db }},COUCH_USER={{ couch_user }},COUCH_PASS={{ couch_password }}"
+      notify:
+      - restart dockergen
+
+    - name: start new admin container
+      docker: "image=blog name=blog_admin command=start_admin state=running ports=3101:3000 env=VIRTUAL_HOST=editor.stevenschobert.com,NODE_ENV=production,SESSION_KEY={{ session_key }},COUCH_URL={{ couch_url }},COUCH_PORT={{ couch_port }},COUCH_DB={{ couch_db }},COUCH_USER={{ couch_user }},COUCH_PASS={{ couch_password }}"
       notify:
       - restart dockergen
 

@@ -27,9 +27,17 @@ cp id_rsa ./ansible/files/id_rsa
 cp id_rsa.pub ./ansible/files/id_rsa.pub
 ```
 
+Setup any deployment variables by copying the `ansible/variables.yml.sample` file:
+
+```sh
+cp ./ansible/variables.yml.sample ./ansible/variables.yml
+```
+
 ## Tasks
 
 The following `make` tasks are available:
 
-- **make servers** - Provisions the cloud servers from DigitalOcean.
-- **make deploy** - Installs any required software and deploys the application to the servers.
+- **make servers** - Creates/updateas the cloud servers on DigitalOcean.
+- **make provision** - Provisions the servers with required software for deployment.
+- **make configure** - Configures the servers for deployment.
+- **make deploy** - Deploys and starts the applications.

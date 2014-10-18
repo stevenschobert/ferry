@@ -27,6 +27,12 @@ cp id_rsa ./ansible/files/id_rsa
 cp id_rsa.pub ./ansible/files/id_rsa.pub
 ```
 
+Copy the `npmrc` sample file and fill in with private registry URL
+
+```sh
+cp ./ansible/files/npmrc.sample ./ansible/files/npmrc
+```
+
 Setup any deployment variables by copying the `ansible/variables.yml.sample` file:
 
 ```sh

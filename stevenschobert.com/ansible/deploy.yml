@@ -24,7 +24,7 @@
       docker_image: path=/root/blog name="blog" state=present
 
     - name: start new consumer container
-      docker: "image=blog name=blog_consumer state=running ports=3100:3000 env=VIRTUAL_HOST=stevenschobert.com,NODE_ENV=production,GAUGES_KEY={{ gauges_key }},SENTRY_KEY={{ sentry_key }},LIBRATO_SOURCE=blog_consumer,LIBRATO_EMAIL={{ librato_email }},LIBRATO_TOKEN={{ librato_token}},COUCH_URL={{ couch_url }},COUCH_PORT={{ couch_port }},COUCH_DB={{ couch_db }},COUCH_USER={{ couch_user }},COUCH_PASS={{ couch_password }}"
+      docker: "image=blog name=blog_consumer state=running ports=3100:3000 env=VIRTUAL_HOST=stevenschobert.com,NODE_ENV=production,GAUGES_KEY={{ gauges_key }},SENTRY_KEY={{ sentry_key }},LIBRATO_SOURCE=blog_consumer,LIBRATO_EMAIL={{ librato_email }},LIBRATO_TOKEN={{ librato_token }},COUCH_URL={{ couch_url }},COUCH_PORT={{ couch_port }},COUCH_DB={{ couch_db }},COUCH_USER={{ couch_user }},COUCH_PASS={{ couch_password }}"
       notify:
       - restart dockergen
 

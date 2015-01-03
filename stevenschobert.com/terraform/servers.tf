@@ -7,5 +7,5 @@ resource "digitalocean_droplet" "web" {
     name = "endor"
     region = "nyc2"
     size = "1gb"
-    ssh_keys = [368204]
+    ssh_keys = [612580]
 }
